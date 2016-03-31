@@ -58,9 +58,17 @@ volttron-pkg package ~/workspace/bemoss_os/Agents/LightingAgent
 volttron-pkg package ~/workspace/bemoss_os/Agents/NetworkAgent
 volttron-pkg package ~/workspace/bemoss_os/Agents/RTUAgent
 volttron-pkg package ~/workspace/bemoss_os/Agents/VAVAgent
+
+#Install discovery Agent
 volttron-pkg package ~/workspace/bemoss_os/Agents/DeviceDiscoveryAgent
 volttron-pkg configure /tmp/volttron_wheels/devicediscoveryagent-0.1-py2-none-any.whl ~/workspace/bemoss_os/Agents/DeviceDiscoveryAgent/devicediscoveryagent.launch.json
 volttron-ctl install devicediscoveryagent=/tmp/volttron_wheels/devicediscoveryagent-0.1-py2-none-any.whl
+
+#Install Platform agent
+volttron-pkg package ~/workspace/bemoss_os/Agents/PlatformAgent
+volttron-pkg configure /tmp/volttron_wheels/platformagent-0.1-py2-none-any.whl ~/workspace/bemoss_os/Agents/PlatformAgent/platformagent.launch.json
+volttron-ctl install platformagent=/tmp/volttron_wheels/platformagent-0.1-py2-none-any.whl
+
 volttron-pkg package ~/workspace/bemoss_os/Agents/AppLauncherAgent
 volttron-pkg configure /tmp/volttron_wheels/applauncheragent-0.1-py2-none-any.whl ~/workspace/bemoss_os/Agents/AppLauncherAgent/applauncheragent.launch.json
 volttron-ctl install applauncheragent=/tmp/volttron_wheels/applauncheragent-0.1-py2-none-any.whl
