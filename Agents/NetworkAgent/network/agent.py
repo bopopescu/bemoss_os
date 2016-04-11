@@ -320,8 +320,8 @@ class NetworkAgent(PublishMixin, BaseAgent):
             current_zone = self.cur.fetchone()[0]
 
             if str(current_zone) != str(previous_zone):
-                print "Agent not found in the said previous zone. Skipping migration"
-                return
+                print "Agent not found in the said previous zone. Starting the agent in New zone anyway."
+
         else:
             print "Agent Not found in table"
             return
@@ -709,6 +709,11 @@ class NetworkAgent(PublishMixin, BaseAgent):
 
             except:
                 pass
+        elif command == "start": #similar to change, except the prev. zone id is not updated.
+            to_move_device_id = topic.split("/")[3]
+            previous_zone_id = int(topic.split("/")[4])
+            new_zone_id = int(topic.split("/")[5])
+            self.migrateAgent(to_move_device_id,previous_zone_id,new_zone_id)
         elif command == "stop":
             to_move_device_id = topic.split("/")[3]
             previous_zone_id = int(topic.split("/")[4])
@@ -718,6 +723,7 @@ class NetworkAgent(PublishMixin, BaseAgent):
             self.sendStopAgentRequest(to_move_device_id,new_zone_id)
         else:
             pass
+
 
     # Behavior to listen to message from MultiBuilding Agent
     @matching.match_start('building/recv/')

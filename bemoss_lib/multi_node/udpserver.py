@@ -92,14 +92,6 @@ conn = psycopg2.connect(host=db_host, port=db_port, database=db_database,
 cur = conn.cursor()  # open a cursor to perform database operations
 print "{} >> Done 1: connect to database name {}".format("Multi-node server", db_database)
 
-cur.execute("DELETE FROM "+db_table_node_info)
-conn.commit()
-print "{} >> Done 2: clean table {}".format("Multi-node server", db_table_node_info)
-
-cur.execute("DELETE FROM "+db_table_node_device)
-conn.commit()
-print "{} >> Done 3: clean table {}".format("Multi-node server", db_table_node_device)
-
 def getHwAddr(ifname):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     info = fcntl.ioctl(s.fileno(), 0x8927,  struct.pack('256s', ifname[:15]))
@@ -171,34 +163,37 @@ else:
     associated_zone=999
 insertNodeInfo(node_name,node_type,node_model,node_status,building_name, ip_address,
                mac_address,associated_zone,date_added,communication,last_scanned_time)
-try:
-    os.remove(os.path.join(Agents_DIR+"MultiBuilding/multibuildingagent.launch.json"))
-except: pass
-data= {
-        "agent": {
-            "exec": "multibuildingagent-0.1-py2.7.egg --config \"%c\" --sub \"%s\" --pub \"%p\""
-        },
-        'building-publish-address': "tcp://"+ip_address+":9163",
-        'building-subscribe-address': "tcp://"+ip_address+":9162",
-        "hosts": {
-            core_location:{"pub": "tcp://"+ip_address+":9163",
-                            "sub": "tcp://"+ip_address+":9162",
-                            "allow": "sub",
-                            "type": "core",
-                            "building_name": building_name,
-                            "zone_id": associated_zone,
-                            "mac_address": mac_address
-            }
-        },
-        'cleanup-period': 600000000,
-        'uuid': "MultiBuildingService"
-}
-_launch_file = os.path.join(Agents_DIR+"MultiBuilding/multibuildingagent.launch.json")
-#print(__launch_file)
-with open(_launch_file, 'w') as outfile:
-    json.dump(data, outfile, indent=4, sort_keys=True)
 
-node_count = 1
+if not os.path.isfile(os.path.join(Agents_DIR+"MultiBuilding/multibuildingagent.launch.json")):
+    #If no launch file, create it
+    data= {
+            "agent": {
+                "exec": "multibuildingagent-0.1-py2.7.egg --config \"%c\" --sub \"%s\" --pub \"%p\""
+            },
+            'building-publish-address': "tcp://"+ip_address+":9163",
+            'building-subscribe-address': "tcp://"+ip_address+":9162",
+            "hosts": {
+                core_location:{"pub": "tcp://"+ip_address+":9163",
+                                "sub": "tcp://"+ip_address+":9162",
+                                "allow": "sub",
+                                "type": "core",
+                                "building_name": building_name,
+                                "zone_id": associated_zone,
+                                "mac_address": mac_address
+                }
+            },
+            'cleanup-period': 600000000,
+            'uuid': "MultiBuildingService"
+    }
+    _launch_file = os.path.join(Agents_DIR+"MultiBuilding/multibuildingagent.launch.json")
+    with open(_launch_file, 'w') as outfile:
+        json.dump(data, outfile, indent=4, sort_keys=True)
+
+
+cur.execute("SELECT building_name FROM "+db_table_node_info)
+node_count = cur.rowcount
+
+
 current_system_auth_replication = cassandraDB.get_replication('system_auth')
 while True:
     print("BEMOSS core >> Listening to connection from BEMOSS node: ")

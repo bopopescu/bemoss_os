@@ -196,6 +196,7 @@ def insert(agentID, all_vars, log_vars, cur_timeLocal=None):
             bSpace.execute(insert_query,values)
             retry = False
         except InvalidRequest as e:
+            connection_established = False
             if e.message.find('unconfigured columnfamily')!=-1:
                 print 'Table not exits. Creating one:'
                 createTable(agentID,log_vars)

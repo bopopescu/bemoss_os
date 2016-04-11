@@ -53,8 +53,10 @@ sleep 2
 volttron-ctl start --tag applauncheragent
 sleep 2
 volttron-ctl start --tag approvalhelperagent
-#sleep 2
-#volttron-ctl start --tag multibuildingagent
+sleep 2
+volttron-ctl start --tag platformmonitoragent
+sleep 2
+volttron-ctl start --tag multibuildingagent
 #Run network agent
 sleep 2
 volttron-ctl start --tag networkagent

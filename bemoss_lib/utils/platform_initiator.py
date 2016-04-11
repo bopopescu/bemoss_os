@@ -372,6 +372,7 @@ os.system("sudo chmod 777 -R ~/workspace/bemoss_os")
 #TODO make a backup of log files
 os.system("sudo rm ~/workspace/bemoss_os/log/volttron.log")
 os.system("sudo rm ~/workspace/bemoss_os/log/cassandra.log")
+os.system("sudo rm ~/workspace/bemoss_os/Agents/MultiBuilding/multibuildingagent.launch.json")
 
 os.system("sudo killall volttron")
 os.system("sudo kill $(cat ~/workspace/bemoss_os/.temp/BEMOSS.pid)")
